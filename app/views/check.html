@@ -1,0 +1,42 @@
+<div class="container" ng-include="'./partial/_header.html'"></div>
+
+<section id="check" class="row placeholder">
+  <article>
+    <div class="large-12 columns">
+      <p class="text-center">Total checked: {{getTotalChecked()}}</p>
+      <form class="row collapse" ng-submit="setFilter(search)">
+        <p class="text-center columns large-8 medium-8 small-8">
+          <input ng-click="resetFilter()" type="text" ng-model="search" placeholder="Search">
+        </p>
+        <p class="text-center columns large-4 medium-4 small-4 end">
+          <button class="my-btn" type="submit">Search</button>
+        </p>
+      </form>
+    </div>
+    <!--p class="text-center columns large-6 large-centered">
+      <button class="my-btn" ng-click="toggleAction()">{{action}} checked</button>
+    </p-->
+    <div class="columns large-12 end">
+      <table>
+        <thead>
+        <tr>
+          <!--th>Num</th-->
+          <th ng-click="setOrder('name', false)">Name <span ng-show="predicate=='name'"><i ng-show="!reverse" class="fi-arrow-up"></i><i ng-show="reverse" class="fi-arrow-down"></i></span></th>
+          <th ng-click="setOrder('phone', false)">Phone <span ng-show="predicate=='phone'"><i ng-show="!reverse" class="fi-arrow-up"></i><i ng-show="reverse" class="fi-arrow-down"></i></span></th>
+          <th ng-click="setOrder('company', false)">Company <span ng-show="predicate=='company'"><i ng-show="!reverse" class="fi-arrow-up"></i><i ng-show="reverse" class="fi-arrow-down"></i></span></th>
+        </tr>
+        </thead>
+        <tbody infinite-scroll='nextPage()' infinite-scroll-disabled="scrollPaused" infinite-scroll-distance='2'>
+        <!--ng-hide="hasCame(person)"-->
+        <tr ng-click="updateCame($event, person)" ng-swipe-right="swipeUpdateCame($event, person)" ng-swipe-left="swipeUpdateCame($event, person)" ng-class="{came: person.came==1}" ng-repeat="person in people | filter:filter | orderBy:predicate:reverse | limitTo:limitTo">
+          <!--td>{{$index+1}}</td-->
+          <td class="bold">{{person.name}}</td>
+          <td>{{person.phone}}</td>
+          <td>{{person.company}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="clear"></div>
+  </article>
+</section>

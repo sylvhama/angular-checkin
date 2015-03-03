@@ -1,0 +1,118 @@
+//@import "compass/reset";
+@import "../bower_components/foundation/scss/normalize";
+
+$fonts_ko: "Nanum Gothic", "나눔고딕", 'Malgun Gothic', 'Gulim', 'SimSun', 'Arial Unicode', Helvetica, sans-serif !important;
+
+/*
+ * Nanum Gothic (Korean) http://www.google.com/webfonts/earlyaccess
+*/
+
+/*@font-face {
+  font-family: 'Nanum Gothic';
+  font-style: normal;
+  font-weight: 700;
+  src: url(../fonts/NanumGothic-Bold.eot);
+  src: url(../fonts/NanumGothic-Bold.eot?#iefix) format('embedded-opentype'),
+  url(../fonts/NanumGothic-Bold.woff2) format('woff2'),
+  url(../fonts/NanumGothic-Bold.woff) format('woff'),
+  url(../fonts/NanumGothic-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Nanum Gothic';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../fonts/NanumGothic-Regular.eot);
+  src: url(../fonts/NanumGothic-Regular.eot?#iefix) format('embedded-opentype'),
+  url(../fonts/NanumGothic-Regular.woff2) format('woff2'),
+  url(../fonts/NanumGothic-Regular.woff) format('woff'),
+  url(../fonts/NanumGothic-Regular.ttf) format('truetype');
+}*/
+
+html, body {
+  margin: 0 auto;
+  word-break: keep-all;
+  background-color: #f1f1f1;
+  font-style: normal;
+  font-weight: 400;
+}
+
+div, span, p, a, li, h1, h2, h3, h4, h5, h6, label, input {
+  font-family: $fonts_ko;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+textarea, input, select {
+  outline: none;
+}
+
+.upper {
+  text-transform: uppercase;
+}
+
+.no-margin {
+  margin:0;
+}
+.no-padding {
+  padding:0;
+}
+
+.clear:before,
+.clear:after {
+  content: ".";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.clear:after {clear: both;}
+
+.float-left {
+  float: left;
+}
+.float-right {
+  float: right;
+}
+
+.inline-block {
+  display: inline-block !important;
+}
+
+.inline {
+  display: inline !important;
+}
+.bold {
+  font-weight: bold;
+}
+
+.check-form {
+  .ng-invalid.ng-dirty, .ng-invalid.ng-invalid-required, .other-error {
+    background-color: #eb5b4c !important;
+    color: #fff!important;
+
+    ::-webkit-input-placeholder { /* WebKit browsers */
+      color:    #fff!important;
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:    #fff!important;
+      opacity:  1;
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:    #fff!important;
+      opacity:  1;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10+ */
+      color:    #fff!important;
+    }
+  }
+}
+
+.my-error {
+  margin: 0;
+  color: #eb5b4c !important;
+  font-size: 13px;
+}
+
+@import "style";

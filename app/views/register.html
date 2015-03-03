@@ -1,0 +1,43 @@
+<div class="container" ng-include="'./partial/_header.html'"></div>
+
+<section id="rsvp" class="placeholder">
+  <article>
+    <form ng-class="{'check-form': checkRegister}" role="form" name="myForm" ng-submit="register($event)">
+      <div class="my-form row">
+        <div class="large-12 large-centered columns">
+          <label for="inputName" class="my-label">Full Name / 이름 *</label>
+          <input id="inputName" type="text" name="inputName" ng-model="fields.name" required ng-trim="true" placeholder="Full Name / 이름 *">
+        </div>
+        <div class="large-12 large-centered columns">
+          <label for="inputEmail" class="my-label">E-mail  / 이메일</label>
+          <input id="inputEmail" type="email" name="inputEmail" ng-model="fields.email" ng-trim="true" placeholder="E-mail  / 이메일">
+        </div>
+        <div class="large-12 large-centered columns">
+          <label for="inputPhone" class="my-label">Mobile Phone / 휴대폰 연락처</label>
+          <input id="inputPhone" type="tel" name="inputPhone" ng-model="fields.phone" ng-trim="true" placeholder="Mobile Phone / 휴대폰 연락처">
+        </div>
+        <div class="large-12 large-centered columns">
+          <label for="inputCompany" class="my-label">Company Name / 회사명</label>
+          <input id="inputCompany" type="text" name="inputCompany" ng-model="fields.company" ng-trim="true" placeholder="Company Name / 회사명">
+        </div>
+        <div class="large-12 large-centered columns">
+          <label for="inputDepartment" class="my-label">Department / 직함</label>
+          <input id="inputDepartment" type="text" name="inputDepartment" ng-model="fields.department" ng-trim="true" placeholder="Department / 직함">
+        </div>
+        <div class="large-12 large-centered columns">
+          <label>Where did you hear about First Thursdays Afterwork parties? *</label>
+          <br>
+          <input id="radiofriends" name="radiowhere" type="radio" ng-model="fields.where" value="Friends or Colleague"> <label for="radiofriends">Friends or Colleague</label><br/>
+          <input id="radioemail" name="radiowhere" type="radio" ng-model="fields.where" value="Email invitation"> <label for="radioemail">Email invitation</label><br/>
+          <input id="radiopersonal" name="radiowhere" type="radio" ng-model="fields.where" value="Personal invitation"> <label for="radiopersonal">Personal invitation</label><br/>
+          <input id="radiofacebook" name="radiowhere" type="radio" ng-model="fields.where" value="Facebook"> <label for="radiofacebook">Facebook</label><br/>
+          <input id="radioother" name="radiowhere" type="radio" ng-model="fields.where" value="other">
+          <label for="radioother">Other: <input id="inputWhere" ng-class="{'other-error': otherError && fields.where=='other' && fields.otherWhere==''}" type="text" name="inputWhere" ng-model="fields.otherWhere" ng-trim="true"></label><br/>
+        </div>
+        <div class="large-12 large-centered columns end text-center">
+          <button class="text-center upper my-btn" type="submit">Send</button>
+        </div>
+      </div>
+    </form>
+  </article>
+</section>
