@@ -1,11 +1,13 @@
 'use strict'
 
-angular.module('checkinHSKApp').controller 'RegisterCtrl', ['$scope', '$http', ($scope, $http) ->
+angular.module('checkinApp').controller 'RegisterCtrl', ['$scope', '$http', '$window', ($scope, $http, $window) ->
 
   $scope.registered = false
 
   $scope.checkRegister = false
   $scope.otherError = false
+  $scope.online = navigator.onLine
+  $scope.closeAlert = false
 
   $scope.fields = {}
   $scope.fields.name = ''
@@ -51,12 +53,32 @@ angular.module('checkinHSKApp').controller 'RegisterCtrl', ['$scope', '$http', (
   $scope.register = ($event) ->
     $event.preventDefault()
     $scope.checkRegister = true
-    if !$scope.registered and $scope.myForm.$valid
+    if !$scope.registered and $scope.myForm.$valid and $scope.online
       if $scope.fields.where != 'other' or ($scope.fields.where == 'other' and $scope.fields.otherWhere != '')
         $scope.registered = true
         $scope.otherError = false
         addRegistration()
       else
         $scope.otherError = true
+
+  $scope.doCloseAlert = () ->
+    $scope.closeAlert = true
+
+  $scope.displayAlert = () ->
+    if $scope.closeAlert then return false
+    else if !$scope.online then return true
+    else return false
+
+  $window.addEventListener 'offline', ((e) ->
+    $scope.online = false
+    $scope.closeAlert = false
+    $scope.$apply()
+  ), false
+
+  $window.addEventListener 'online', ((e) ->
+    $scope.online = true
+    $scope.closeAlert = false
+    $scope.$apply()
+  ), false
 
 ]

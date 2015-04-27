@@ -1,5 +1,4 @@
 <div class="container" ng-include="'./partial/_header.html'"></div>
-
 <section id="rsvp" class="placeholder">
   <article>
     <form ng-class="{'check-form': checkRegister}" role="form" name="myForm" ng-submit="register($event)">
@@ -25,7 +24,7 @@
           <input id="inputDepartment" type="text" name="inputDepartment" ng-model="fields.department" ng-trim="true" placeholder="Department / 직함">
         </div>
         <div class="large-12 large-centered columns">
-          <label>Where did you hear about First Thursdays Afterwork parties? *</label>
+          <label>Where did you hear about this event?</label>
           <br>
           <input id="radiofriends" name="radiowhere" type="radio" ng-model="fields.where" value="Friends or Colleague"> <label for="radiofriends">Friends or Colleague</label><br/>
           <input id="radioemail" name="radiowhere" type="radio" ng-model="fields.where" value="Email invitation"> <label for="radioemail">Email invitation</label><br/>
@@ -35,7 +34,7 @@
           <label for="radioother">Other: <input id="inputWhere" ng-class="{'other-error': otherError && fields.where=='other' && fields.otherWhere==''}" type="text" name="inputWhere" ng-model="fields.otherWhere" ng-trim="true"></label><br/>
         </div>
         <div class="large-12 large-centered columns end text-center">
-          <button class="text-center upper my-btn" type="submit">Send</button>
+          <button ng-disabled="!online" class="text-center upper my-btn" type="submit">Send</button>
         </div>
       </div>
     </form>

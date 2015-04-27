@@ -1,7 +1,8 @@
 'use strict'
 
-angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', '$http', '$timeout', ($rootScope, $scope, $http, $timeout) ->
+angular.module('checkinApp').controller 'CheckCtrl', ['$rootScope','$scope', '$http', '$timeout', '$window', '$localForage', ($rootScope, $scope, $http, $timeout, $window, $localForage) ->
   $scope.people = []
+  $scope.peopleWaiting = []
   $scope.hideCame = false
   $scope.action = 'Hide'
   $scope.limitTo = 20
@@ -9,12 +10,14 @@ angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', 
   $scope.filter = ''
   $scope.predicate = 'name'
   $scope.reverse = false
+  $scope.online = navigator.onLine
+  $scope.closeAlert = false
 
   timeoutId = 0
   min = 0
-  limit = 3
+  limit = 5
 
-  getPeople = () ->
+  getPeople = (auto) ->
     $http.post("./php/do.php?r=selectPeople"
       data: {
         hash: '3LoZNrrZ0nLHd5S95EIMhzsSRt7ufC0CJbDr0MLy'
@@ -24,6 +27,9 @@ angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', 
         $scope.people = data
         for person in $scope.people
           person.came = parseInt(person.came)
+        $localForage.setItem('people', $scope.people)
+        if auto
+          $scope.$apply()
         startTimer()
       else
         console.log "[Error][GetPeople] " + data.error
@@ -31,34 +37,69 @@ angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', 
       console.log "[Error][GetPeople] " + status
 
   getUpdate = () ->
-    $http.post("./php/do.php?r=selectPeople"
-      data: {
-        hash: '3LoZNrrZ0nLHd5S95EIMhzsSRt7ufC0CJbDr0MLy'
-      }
-    ).success((data, status) ->
-      if !data.error
-        for person in $scope.people
-          for newPerson in data
-            if person.id == newPerson.id
-              if parseInt(person.came) != parseInt(newPerson.came)
-                person.came = parseInt(newPerson.came)
-              break
-        startTimer()
-      else
-        console.log "[Error][UpdatePeople] " + data.error
-    ).error (data, status) ->
-      console.log "[Error][UpdatePeople] " + status
+    if $scope.online
+      $http.post("./php/do.php?r=selectPeople"
+        data: {
+          hash: '3LoZNrrZ0nLHd5S95EIMhzsSRt7ufC0CJbDr0MLy'
+        }
+      ).success((data, status) ->
+        if !data.error
+          for person in $scope.people
+            for newPerson in data
+              if person.id == newPerson.id
+                if parseInt(person.came) != parseInt(newPerson.came)
+                  person.came = parseInt(newPerson.came)
+                break
+          startTimer()
+        else
+          console.log "[Error][UpdatePeople] " + data.error
+      ).error (data, status) ->
+        console.log "[Error][UpdatePeople] " + status
 
-  updatePersonCame = (person) ->
-    $http.post("./php/do.php?r=updatePersonCame"
+  updatePersonCame = (person, wasWaiting) ->
+    $localForage.setItem('people', $scope.people)
+    if $scope.online and !wasWaiting
+      $http.post("./php/do.php?r=updatePersonCame"
+        data: {
+          id: person.id,
+          came: person.came,
+          hash: '3LoZNrrZ0nLHd5S95EIMhzsSRt7ufC0CJbDr0MLy'
+        }
+      ).success((data, status) ->
+        if data.error
+          alert "[Error] update impossible"
+      ).error (data, status) ->
+        alert "[Error] Server problem"
+
+    if !$scope.online and !wasWaiting
+      already = false
+      for waiter, index in $scope.peopleWaiting
+        if waiter.id == person.id
+          $scope.peopleWaiting[index].came = person.came
+          already = true
+      if !already
+        $scope.peopleWaiting.push(person)
+      $localForage.setItem('peopleWaiting', $scope.peopleWaiting)
+
+  updateWaiters = (waiters, auto) ->
+    $http.post("./php/do.php?r=updateWaiters"
       data: {
-        id: person.id,
-        came: person.came,
+        waiters: waiters,
         hash: '3LoZNrrZ0nLHd5S95EIMhzsSRt7ufC0CJbDr0MLy'
       }
     ).success((data, status) ->
       if data.error
         alert "[Error] update impossible"
+      else
+        $scope.people = data
+        for person in $scope.people
+          person.came = parseInt(person.came)
+        $localForage.setItem('people', $scope.people)
+        $localForage.setItem('peopleWaiting', [])
+        $scope.peopleWaiting = []
+        if auto
+          $scope.$apply()
+        startTimer()
     ).error (data, status) ->
       alert "[Error] Server problem"
 
@@ -66,16 +107,16 @@ angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', 
     $event.preventDefault()
     if person.came == 1 and $rootScope.media!='mobile'
       person.came = 0
-      updatePersonCame(person)
+      updatePersonCame(person, false)
     else if person.came == 0
       person.came = 1
-      updatePersonCame(person)
+      updatePersonCame(person, false)
 
   $scope.swipeUpdateCame = ($event, person) ->
     $event.preventDefault()
     if person.came == 1 and $rootScope.media=='mobile'
       person.came = 0
-      updatePersonCame(person)
+      updatePersonCame(person, false)
 
   $scope.hasCame = (person) ->
     if $scope.hideCame
@@ -116,7 +157,30 @@ angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', 
       if person.came == 1 then total++
     return total
 
-  getPeople()
+  $scope.doCloseAlert = () ->
+    $scope.closeAlert = true
+
+  $scope.displayAlert = () ->
+    if $scope.closeAlert then return false
+    else if !$scope.online then return true
+    else return false
+
+  if $scope.online
+    $localForage.getItem('peopleWaiting').then( (data) ->
+      if typeof data != 'undefined' and data.length > 0
+        updateWaiters(data, false)
+      else
+        getPeople(false)
+    )
+  else
+    $localForage.getItem('people').then( (data) ->
+      if typeof data != 'undefined'
+        $scope.people = data
+    )
+    $localForage.getItem('peopleWaiting').then( (data) ->
+      if typeof data != 'undefined'
+        $scope.peopleWaiting = data
+    )
 
   myTimer = ->
     min++
@@ -137,4 +201,19 @@ angular.module('checkinHSKApp').controller 'CheckCtrl', ['$rootScope','$scope', 
 
   $scope.$on "$destroy", () ->
     $timeout.cancel(timeoutId);
+
+  $window.addEventListener 'offline', ((e) ->
+    $scope.online = false
+    $scope.closeAlert = false
+    $scope.$apply()
+  ), false
+
+  $window.addEventListener 'online', ((e) ->
+    $scope.online = true
+    $scope.closeAlert = false
+    if $scope.peopleWaiting.length > 0
+      updateWaiters($scope.peopleWaiting, true)
+    else
+      getPeople(true)
+  ), false
 ]

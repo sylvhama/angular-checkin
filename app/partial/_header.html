@@ -1,6 +1,10 @@
-<header>
-  <h1 class="text-center"><img src="/images/hsk.jpg" alt="HSK"></h1>
-</header>
+<div data-alert class="alert-box alert" ng-show="displayAlert()">
+    Network is offline! <span ng-if="peopleWaiting.length>0">({{peopleWaiting.length}} none saved data)</span>
+    <span ng-click="doCloseAlert($event)" href="#" class="close">&times;</span>
+</div>
+<!--header>
+  <h1 class="text-center"></h1>
+</header-->
 <nav class="row text-center">
   <div ng-class="{'active-menu': activeMenu=='checkin'}" class="large-6 medium-6 small-6 columns choice-menu">
     <p>

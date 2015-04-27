@@ -43,6 +43,9 @@ case 'addRegistration':
 case 'updatePersonCame':
   echo updatePersonCame();
   break;
+case 'updateWaiters':
+  echo updateWaiters();
+  break;
 case 'selectPeople':
   echo selectPeople();
   break;
@@ -133,6 +136,51 @@ function updatePersonCame() {
     return true;
   }else {
     $error = array("error" =>  "UPDATE registration query error.".$sql);
+    return json_encode($error);
+  }
+}
+
+function updateWaiters() {
+  $data = file_get_contents("php://input");
+  $objData = json_decode($data);
+
+  if(!isset($objData->data->hash)) {
+    $error = array("error" =>  "No hash value.");
+    return json_encode($error);
+  }
+  if (!isValidHash($objData->data->hash)) {
+    $error = array("error" =>  "Incorrect hash value.");
+    return json_encode($error);
+  }
+
+  $mysqli = $GLOBALS['mysqli'];
+  $result = false;
+  $sql = '';
+  foreach ($objData->data->waiters as $waiter) {
+    $sql = "UPDATE `registration` SET `came` = ".$waiter->came.", `updated_at` = NOW() WHERE id = ".$waiter->id."; ";
+    $result = $mysqli->query($sql);
+  }
+  if($result) {
+    $sql = "SELECT id, name, company, phone, came FROM `registration` ORDER BY name";
+    if ($result = $mysqli->query($sql)) {
+      if ($result->num_rows > 0) {
+        while($row = mysqli_fetch_assoc($result)) {
+          $obj[] = $row;
+        }
+        $result->close();
+        return json_encode($obj);
+      }else {
+        $obj = array();
+        $result->close();
+        return json_encode($obj);
+      }
+    }else {
+      $error = array("error" =>  "SELECT people query error.");
+      return json_encode($error);
+    }
+
+  }else {
+    $error = array("error" =>  "UPDATE waiters query error.".$sql);
     return json_encode($error);
   }
 }

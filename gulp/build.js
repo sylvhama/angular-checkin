@@ -8,6 +8,7 @@ var $ = require('gulp-load-plugins')({
 
 var gutil = require('gulp-util');
 var coffee = require('gulp-coffee');
+var replace = require('gulp-replace-task');
 
 function handleError(err) {
   console.error(err.toString());
@@ -16,7 +17,7 @@ function handleError(err) {
 
 gulp.task('styles',  function () {
   return gulp.src('app/styles/*.scss')
-    .pipe($.rubySass({style: 'expanded'}))
+    .pipe($.rubySass({style: 'expanded', container: '~/tmp/test'}))
     .on('error', handleError)
     .pipe($.autoprefixer('last 1 version'))
     .pipe(gulp.dest('app/styles'))
@@ -38,11 +39,21 @@ gulp.task('scripts', function () {
 
 gulp.task('views', function () {
   return gulp.src('app/views/**/*.html')
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }))
     .pipe(gulp.dest('dist/views'))
     .pipe($.size());
 });
 gulp.task('partials', function () {
   return gulp.src('app/partial/**/*.html')
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }))
     .pipe(gulp.dest('dist/partial'))
     .pipe($.size());
 });
@@ -61,7 +72,7 @@ gulp.task('html', ['styles', 'coffee', 'scripts', 'views', 'partials', 'php'], f
 
   return gulp.src('app/*.html')
     .pipe(assets = $.useref.assets())
-    .pipe($.rev())
+    //.pipe($.rev())
     .pipe(jsFilter)
     .pipe($.ngAnnotate())
     .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
@@ -80,7 +91,7 @@ gulp.task('html', ['styles', 'coffee', 'scripts', 'views', 'partials', 'php'], f
     }))
     .pipe(htmlFilter.restore())
     .pipe(gulp.dest('dist'))
-    .pipe($.size());
+    .pipe($.size())
 });
 
 gulp.task('images', function () {

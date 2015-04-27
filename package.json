@@ -1,5 +1,5 @@
 {
-  "name": "asiance2015",
+  "name": "checkinApp",
   "version": "0.0.0",
   "dependencies": {},
   "devDependencies": {
@@ -38,7 +38,8 @@
     "chalk": "^0.4.0",
     "protractor": "^1.1.1",
     "uglify-save-license": "^0.4.1",
-    "gulp-ruby-sass": "^0.7.1"
+    "gulp-ruby-sass": "^0.7.1",
+    "gulp-replace-task": "~0.1.0"
   },
   "engines": {
     "node": ">=0.10.0"

@@ -1,0 +1,21 @@
+CACHE MANIFEST
+# v1 2015-04-23
+
+CACHE:
+index.html
+views/check.html
+views/register.html
+partial/_header.html
+scripts/scripts.js
+scripts/vendor.js
+styles/main.css
+/fonts/icon/foundation-icons.css 
+fonts/icon/foundation-icons.eot
+fonts/icon/foundation-icons.svg
+fonts/icon/foundation-icons.ttf
+fonts/icon/foundation-icons.woff
+
+NETWORK:
+*
+http://*
+https://*
