@@ -3,10 +3,10 @@
 ///isXMLHTTPRequest() or die('Forbidden');
 isset($_GET['r'])       or die('Forbidden');
 
-$dbhost = 'localhost';
-$dbname = 'hsk_afterworkseoul_checkin';
-$dbuser = 'root';
-$dbpass = 'asiance';
+$dbhost = '';
+$dbname = '';
+$dbuser = '';
+$dbpass = '';
 
 $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 
@@ -40,6 +40,9 @@ switch ($method) {
 case 'addRegistration':
   echo addRegistration();
   break;
+case 'addPeopleWaitingR':
+  echo addPeopleWaitingR();
+  break;
 case 'updatePersonCame':
   echo updatePersonCame();
   break;
@@ -48,9 +51,6 @@ case 'updateWaiters':
   break;
 case 'selectPeople':
   echo selectPeople();
-  break;
-case 'getGuestCard':
-  echo getGuestCard();
   break;
 default:
   $error = array("error" =>  "Undefined function.");
@@ -80,6 +80,34 @@ function addRegistration() {
     return $id;
   }else {
     $error = array("error" =>  "INSERT registration query error. " . $sql);
+    return json_encode($error);
+  }
+}
+
+function addPeopleWaitingR() {
+  $data = file_get_contents("php://input");
+  $objData = json_decode($data);
+
+  if(!isset($objData->data->hash)) {
+    $error = array("error" =>  "No hash value.");
+    return json_encode($error);
+  }
+  if (!isValidHash($objData->data->hash)) {
+    $error = array("error" =>  "Incorrect hash value.");
+    return json_encode($error);
+  }
+
+  $mysqli = $GLOBALS['mysqli'];
+  $result = false;
+  $sql = '';
+  foreach ($objData->data->peopleWaitingR as $waiter) {
+    $sql = "INSERT INTO `registration` (`name`, `company`, `email`, `phone`, `department`, `where`, `updated_at`) VALUES ('".addslashes($waiter->name)."', '".addslashes($waiter->company)."', '".addslashes($waiter->email)."', '".addslashes($waiter->phone)."', '".addslashes($waiter->department)."', '".addslashes($waiter->finalwhere)."', NOW());";
+    $result = $mysqli->query($sql);
+  }
+  if($result) {
+    return true;
+  }else {
+    $error = array("error" =>  "INSERT waitersR query error.".$sql);
     return json_encode($error);
   }
 }

@@ -1,11 +1,13 @@
 <div data-alert class="alert-box alert" ng-show="displayAlert()">
-    Network is offline! <span ng-if="peopleWaiting.length>0">({{peopleWaiting.length}} none saved data)</span>
-    <span ng-click="doCloseAlert($event)" href="#" class="close">&times;</span>
+  Network is offline!
+  <span ng-if="peopleWaiting.length>0">({{peopleWaiting.length}} none saved data)</span>
+  <span ng-if="peopleWaitingR.length>0">({{peopleWaitingR.length}} none saved data)</span>
+  <span ng-click="doCloseAlert($event)" href="#" class="close">&times;</span>
 </div>
 <!--header>
   <h1 class="text-center"></h1>
 </header-->
-<nav class="row text-center">
+<nav class="row text-center" ng-class="{'offline': displayAlert()}">
   <div ng-class="{'active-menu': activeMenu=='checkin'}" class="large-6 medium-6 small-6 columns choice-menu">
     <p>
       <a href="#/checkin">

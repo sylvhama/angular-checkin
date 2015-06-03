@@ -30,7 +30,7 @@ angular.module('checkinApp').controller 'CheckCtrl', ['$rootScope','$scope', '$h
         $localForage.setItem('people', $scope.people)
         if auto
           $scope.$apply()
-        startTimer()
+        #startTimer()
       else
         console.log "[Error][GetPeople] " + data.error
     ).error (data, status) ->
@@ -50,7 +50,7 @@ angular.module('checkinApp').controller 'CheckCtrl', ['$rootScope','$scope', '$h
                 if parseInt(person.came) != parseInt(newPerson.came)
                   person.came = parseInt(newPerson.came)
                 break
-          startTimer()
+          #startTimer()
         else
           console.log "[Error][UpdatePeople] " + data.error
       ).error (data, status) ->
@@ -99,7 +99,7 @@ angular.module('checkinApp').controller 'CheckCtrl', ['$rootScope','$scope', '$h
         $scope.peopleWaiting = []
         if auto
           $scope.$apply()
-        startTimer()
+        #startTimer()
     ).error (data, status) ->
       alert "[Error] Server problem"
 
@@ -199,21 +199,24 @@ angular.module('checkinApp').controller 'CheckCtrl', ['$rootScope','$scope', '$h
     min = 0
     getUpdate()
 
-  $scope.$on "$destroy", () ->
-    $timeout.cancel(timeoutId);
-
-  $window.addEventListener 'offline', ((e) ->
+  nowOffline = ->
     $scope.online = false
     $scope.closeAlert = false
     $scope.$apply()
-  ), false
 
-  $window.addEventListener 'online', ((e) ->
+  nowOnline = ->
     $scope.online = true
     $scope.closeAlert = false
     if $scope.peopleWaiting.length > 0
       updateWaiters($scope.peopleWaiting, true)
     else
       getPeople(true)
-  ), false
+
+  $window.addEventListener 'offline', nowOffline, false
+  $window.addEventListener 'online', nowOnline, false
+
+  $scope.$on "$destroy", () ->
+    $timeout.cancel(timeoutId)
+    $window.removeEventListener('online', nowOnline, false)
+    $window.removeEventListener('offline', nowOffline, false)
 ]

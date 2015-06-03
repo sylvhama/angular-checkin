@@ -15,6 +15,7 @@ html, body {
 
 .alert-box {
   position: fixed;
+  top: 0;
   z-index: 99;
   width: 100%;
   max-width: 768px;
@@ -30,8 +31,8 @@ html, body {
 
 .alert-box.ng-hide-add.ng-hide-add-active,
 .alert-box.ng-hide-remove.ng-hide-remove-active {
-  -webkit-transition: all linear 0.25s;
-  transition: all linear 0.25s;
+  -webkit-transition: all ease 0.25s;
+  transition: all ease 0.25s;
 }
 
 .alert-box.ng-hide {
@@ -54,7 +55,15 @@ header {
 }
 
 nav {
+  margin-top: 0;
   background-color: #fff;
+  -webkit-transition: margin ease 0.25s;
+  transition: margin ease 0.25s;
+
+  &.offline {
+    margin-top: 50px;
+  }
+
   p {
     margin: 0;
   }
@@ -188,6 +197,7 @@ nav {
 
     tr {
       height: 60px;
+      -webkit-transition: background-color 300ms ease-out;
       transition: background-color 300ms ease-out;
       th:hover {
         text-decoration: underline;
